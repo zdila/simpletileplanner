@@ -1,0 +1,96 @@
+input, select, button {
+  margin: 2px;
+}
+
+table {
+  border-spacing: 1px;
+  border-collapse: separate;
+}
+
+td {
+  background-color: white;
+  cursor: pointer;
+  padding: 0;
+}
+
+.col {
+  background-color: silver;
+  height: 20px;
+}
+
+.row {
+  background-color: silver;
+}
+
+.row div {
+  width: 20px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button.type {
+  margin: 10px;
+  padding: 10px;
+}
+
+div {
+  margin: auto;
+}
+
+button.selected {
+  outline: 4px solid green;
+}
+
+.work {
+  position: relative;
+}
+
+.table {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.mask {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  width: 2000px;
+  height: 1500px;
+  pointer-events: none;
+}
+
+.person {
+  position: absolute;
+  pointer-events: none;
+}
+
+.type-0 {
+  background-image: url(http://www.plitka.eu/published/publicdata/PLITKAT/attachments/SC/products_pictures/plitka-tile-EU-SP2-Keros-Ceramica-Fusion-Beige-500-250-400-200-.jpg);
+  background-size: contain;
+  width: 80px;
+  height: 50px;
+}
+
+.type-1 {
+  background-image: url(http://www.living-bath.gr/wp-content/uploads/2014/11/FUSION-MARRON-25X40.jpg);
+  background-size: contain;
+  width: 80px;
+  height: 50px;
+}
+
+.type-2 {
+  background-image: url(http://eshop.dipro-koupelny.cz/out/pictures/z1/img2HH0000101.jpg);
+  background-size: contain;
+  width: 80px;
+  height: 50px;
+}
+
+.type-3 {
+  background-image: url(  https://s30.postimg.org/9l3qumj1t/listela.jpg);
+  background-size: contain;
+  width: 80px;
+  height: 10px;
+}
