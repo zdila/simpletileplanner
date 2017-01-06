@@ -197,7 +197,7 @@ class Tiler extends React.Component {
             })
           }
         </style>
-        <h1>Simple Tile Designer</h1>
+        <h1>Simple Tile Planner</h1>
         <a href="help.html">Help</a>
         {' '}<a href="https://github.com/zdila/simpletileplanner">View on GitHub</a>
         {' '}<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" className="donate">
