@@ -13,7 +13,7 @@ const planDefaults = {
   width: 20,
   height: 20,
   w: 300,
-  h: 200,
+  h: 250,
   x: 20,
   y: 10
 };
