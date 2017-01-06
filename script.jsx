@@ -162,6 +162,14 @@ class Tiler extends React.Component {
     this.setState({ tileSpec: e.target.value });
   }
 
+  handleLoadClick() {
+    const { file } = this.refs;
+    file.style.display = '';
+    file.focus();
+    file.click();
+    file.style.display = 'none';
+  }
+
   load() {
     const file = this.refs.file.files[0];
     if (!file) {
@@ -171,6 +179,7 @@ class Tiler extends React.Component {
     const reader = new FileReader();
     reader.onload = e => {
       this.setState(JSON.parse(e.target.result));
+      this.refs.file.value = null;
     };
     reader.readAsText(file);
   }
@@ -197,32 +206,34 @@ class Tiler extends React.Component {
             })
           }
         </style>
-        <h1>Simple Tile Planner</h1>
-        <a href="help.html">Help</a>
-        {' '}<a href="https://github.com/zdila/simpletileplanner">View on GitHub</a>
-        {' '}<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" className="donate">
-          <input type="hidden" name="cmd" value="_s-xclick"/>
-          <input type="hidden" name="hosted_button_id" value="5E5GNZUBJA2YL"/>
-          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
-        </form>
+        <div className="header">
+          <h1>Simple Tile Planner</h1>
+          {' | '}<a href="help.html">Help</a>
+          {' | '}<a href="https://github.com/zdila/simpletileplanner">View on GitHub</a>
+          {' | '}<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" className="donate">
+            <input type="hidden" name="cmd" value="_s-xclick"/>
+            <input type="hidden" name="hosted_button_id" value="5E5GNZUBJA2YL"/>
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
+          </form>
+        </div>
         <hr/>
         Project:
+        <input type="file" ref="file" onChange={this.load.bind(this)}/><button onClick={this.handleLoadClick.bind(this)}>Load</button>
+        <a className="button" download="project.txt" href={`data:text/plain,${JSON.stringify(this.state)}`}>Save</a>
         <button onClick={this.toggleTileDefinitions.bind(this)}>{this.state.showTileDefinitions ? 'Hide' : 'Edit'} tile definitions</button>
-        <input type="file" ref="file"/><button onClick={this.load.bind(this)}>Load</button>
-        <a download="project.txt" href={`data:text/plain,${JSON.stringify(this.state)}`}>Save</a>
-        {this.state.showTileDefinitions &&
-          <div>
-            Tiles: <textarea cols="100" rows="4" onChange={this.handleTileSpecChange.bind(this)}>{this.state.tileSpec}</textarea>
-          </div>
-        }
-        <hr/>
-        Plan: <select onChange={this.setPlan.bind(this)} disabled={this.state.selected === -1}>
+        <div className="vr"/> Plan: <select onChange={this.setPlan.bind(this)} disabled={this.state.selected === -1}>
           {this.state.plans.map((plan, i) => <option value={i} selected={this.state.selected === i}>{plan.name}</option>)}
         </select>
         <button onClick={this.newPlan.bind(this)}>Add new</button>
         <button onClick={this.deletePlan.bind(this)} disabled={this.state.selected === -1}>Delete</button>
 
-        <br/>
+        {this.state.showTileDefinitions &&
+          <div>
+            <hr/>
+            <label title="[width in cm] [height in cm] [image URL]">Tiles: <textarea cols="100" rows="4" onChange={this.handleTileSpecChange.bind(this)}>{this.state.tileSpec}</textarea></label>
+          </div>
+        }
+
         {this.state.selected !== -1 && this.renderPlan()}
       </div>
     );
@@ -241,8 +252,8 @@ class Tiler extends React.Component {
             <span>{i ? ', ' : ''}{v} = <input type="number" value={plan[v]} onChange={this.change.bind(this, v)} min="0" max="1000"/> cm</span>
           )
         }
-        {' '}| <label><input type="checkbox" checked={this.state.person} onClick={this.togglePerson.bind(this)}/> Show person</label>
-        <br/>
+        {' '}| <label><input type="checkbox" checked={this.state.person} onClick={this.togglePerson.bind(this)}/> Show person (180 cm)</label>
+        <hr/>
         {[ 0, 1, 2, 3 ].map(type => <button className={'type ' + (type === this.state.type ? 'selected' : '')}
             onClick={this.select.bind(this, type)}><div className={'type-' + type}/></button>)}
         <hr/>
