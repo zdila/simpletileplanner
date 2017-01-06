@@ -229,6 +229,7 @@ class Tiler extends React.Component {
           <input type="hidden" name="hosted_button_id" value="5E5GNZUBJA2YL"/>
           <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
         </form>
+        <a href="https://github.com/zdila/simpletileplanner">View on GitHub</a>
         {this.state.showTileDefinitions &&
           <div>
             Tiles: <textarea cols="100" rows="4" onChange={this.handleTileSpecChange.bind(this)}>{this.state.tileSpec}</textarea>
