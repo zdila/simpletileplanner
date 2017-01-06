@@ -15,9 +15,8 @@ class Tiler extends React.Component {
 
     const plans = window.localStorage.getItem('plans');
 
-    console.log("PPP", plans);
-
     this.state = {
+      showTileDefinitions: false,
       rows,
       type: 0,
       width: 20,
@@ -29,10 +28,10 @@ class Tiler extends React.Component {
       plans: plans ? JSON.parse(plans) : [],
       plan: null,
       person: false,
-      tileSpec: `40 25 http://www.plitka.eu/published/publicdata/PLITKAT/attachments/SC/products_pictures/plitka-tile-EU-SP2-Keros-Ceramica-Fusion-Beige-500-250-400-200-.jpg
-40 25 http://www.living-bath.gr/wp-content/uploads/2014/11/FUSION-MARRON-25X40.jpg
-40 25 http://eshop.dipro-koupelny.cz/out/pictures/z1/img2HH0000101.jpg
-40 5 https://s30.postimg.org/9l3qumj1t/listela.jpg`
+      tileSpec: `40 25 https://s27.postimg.org/kxmrvn54z/image.jpg
+40 25 https://s30.postimg.org/jdmtfcg1d/image.jpg
+40 25 https://s29.postimg.org/jrnfyfj7b/image.jpg
+40 5 https://s27.postimg.org/hlan3nfk3/image.jpg`
     };
   }
 
@@ -132,7 +131,7 @@ class Tiler extends React.Component {
   }
 
   newPlan() {
-    const plan = window.prompt("Name");
+    const plan = window.prompt('Plan name');
     if (plan) {
       const plans = this.state.plans.includes(plan) ? this.state.plans : [ ...this.state.plans, plan ];
       window.localStorage.setItem('plans', JSON.stringify(plans));
@@ -141,7 +140,7 @@ class Tiler extends React.Component {
   }
 
   deletePlan() {
-    if (window.confirm('Are you sure?')) {
+    if (window.confirm(`Are you sure to delete plan "${this.state.plan}"?`)) {
       const i = this.state.plans.indexOf(this.state.plan);
       const plans = this.state.plans.slice(0);
       plans.splice(i, 1);
@@ -170,20 +169,29 @@ class Tiler extends React.Component {
     this.setState({ [what]: isNaN(value) ? 0 : value });
   }
 
-  load(e) {
-    try {
-      this.setState(JSON.parse(e.target.value));
-    } catch (e) {
-      // ignore
-    }
-  }
-
   togglePerson(e) {
     this.setState({ person: !this.state.person });
   }
 
   handleTileSpecChange(e) {
-    setState({ tileSpec: e.target.value });
+    this.setState({ tileSpec: e.target.value });
+  }
+
+  load() {
+    const file = this.refs.file.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      this.setState(JSON.parse(e.target.result));
+    };
+    reader.readAsText(file);
+  }
+
+  toggleTileDefinitions() {
+    this.setState({ showTileDefinitions: !this.state.showTileDefinitions });
   }
 
   render() {
@@ -196,24 +204,54 @@ class Tiler extends React.Component {
 
     return (
       <div>
-        <select onChange={this.setPlan.bind(this)} disabled={!this.state.plan}>
+        <style>
+          {
+            this.state.tileSpec.split('\n').map(function (line, i) {
+              const [ w, h, url ] = line.split(' ');
+              return `
+                .type-${i} {
+                  background-image: url("${url}");
+                  background-size: contain;
+                  width: ${w * 2}px;
+                  height: ${h * 2}px;
+                }
+              `;
+            })
+          }
+        </style>
+        <h1>Simple Tile Designer</h1>
+        Project:
+        <button onClick={this.toggleTileDefinitions.bind(this)}>{this.state.showTileDefinitions ? 'Hide' : 'Edit'} tile definitions</button>
+        <input type="file" ref="file"/><button onClick={this.load.bind(this)}>Load</button>
+        <a download="project.txt" href={`data:text/plain,${JSON.stringify(this.getDataToSave())}`}>Save</a>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" className="donate">
+          <input type="hidden" name="cmd" value="_s-xclick"/>
+          <input type="hidden" name="hosted_button_id" value="5E5GNZUBJA2YL"/>
+          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"/>
+        </form>
+        {this.state.showTileDefinitions &&
+          <div>
+            Tiles: <textarea cols="100" rows="4" onChange={this.handleTileSpecChange.bind(this)}>{this.state.tileSpec}</textarea>
+          </div>
+        }
+        <hr/>
+        Plan: <select onChange={this.setPlan.bind(this)} disabled={!this.state.plan}>
           {this.state.plans.map(plan => <option value={plan} selected={plan === this.state.plan}>{plan}</option>)}
         </select>
-        <button onClick={this.newPlan.bind(this)}>New</button>
-        <button onClick={this.deletePlan.bind(this)} disabled={!this.state.plan}>Delete</button><br/>
+        <button onClick={this.newPlan.bind(this)}>Add new</button>
+        <button onClick={this.deletePlan.bind(this)} disabled={!this.state.plan}>Delete</button>
+
+        <br/>
         {this.state.plan &&
           <div>
-            Save/Load:<input value={JSON.stringify(this.getDataToSave())} onChange={this.load.bind(this)} size="100"/><br/>
-            Tiles: <textarea cols="100" rows="3" onChange={this.handleTileSpecChange.bind(this)}>{this.state.tileSpec}</textarea>
             <hr/>
             {
               [ 'x', 'y', 'w', 'h' ].map((v, i) =>
                 <span>{i ? ', ' : ''}{v} = <input type="number" value={this.state[v]} onChange={this.change.bind(this, v)} min="0" max="1000"/> cm</span>
               )
             }
+            {' '}| <label><input type="checkbox" checked={this.state.person} onClick={this.togglePerson.bind(this)}/> Show person</label>
             <br/>
-            <label><input type="checkbox" checked={this.state.person} onClick={this.togglePerson.bind(this)}/> Person</label>
-            <hr/>
             {[ 0, 1, 2, 3 ].map(type => <button className={'type ' + (type === this.state.type ? 'selected' : '')}
                 onClick={this.select.bind(this, type)}><div className={'type-' + type}/></button>)}
             <hr/>
